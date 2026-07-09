@@ -11,7 +11,7 @@
         .app-card { background-color: #ffffff; width: 95%; max-width: 400px; border-radius: 24px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); text-align: center; border: 1px solid #e2e8f0; }
         h1 { color: #1e293b; font-size: 24px; margin: 0 0 25px 0; font-weight: 700; }
         
-        /* تصميم العداد الأبيض والكلاسيك */
+        /* العداد الكلاسيك المريح للعين */
         .timer-container { background: #1e293b; border-radius: 20px; padding: 25px; color: white; margin-bottom: 25px; box-shadow: 0 6px 15px rgba(30, 41, 59, 0.2); }
         #time-display { font-size: 42px; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
         .timer-inputs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
@@ -20,6 +20,162 @@
         .timer-buttons button { background: #ffffff; border: none; color: #1e293b; font-size: 15px; font-weight: bold; cursor: pointer; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s; }
         .timer-buttons button:hover { background: #f1f5f9; transform: translateY(-2px); }
         
-        /* إضافة المهام */
+        /* إضافة المهام (تم إصلاح الجزء المقطوع هنا) */
         .input-row { display: flex; gap: 10px; margin-bottom: 25px; }
-        #task-input { flex: 1; height: 46px; border: 1px solid #cbd5e1
+        #task-input { flex: 1; height: 46px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0 15px; font-size: 15px; outline: none; text-align: right; color: #1e293b; }
+        #task-input:focus { border-color: #64748b; box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15); }
+        #add-task-btn { background-color: #1e293b; color: white; border: none; border-radius: 12px; padding: 0 22px; font-size: 15px; cursor: pointer; font-weight: bold; }
+        
+        #tasks-list { text-align: right; }
+        .task-box { display: flex; justify-content: space-between; align-items: center; background-color: #f8fafc; padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-right: 5px solid #64748b; }
+        .task-text { font-size: 15px; color: #334155; font-weight: 500; }
+        .delete-btn { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: bold; }
+        
+        #motivation-msg { color: #059669; font-weight: bold; margin-top: 20px; min-height: 24px; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <h1>إنجازاتي 🎆</h1>
+
+        <div class="timer-container">
+            <div id="time-display">00:00:00</div>
+            <div class="timer-inputs">
+                <input type="number" id="hours-input" placeholder="ساعة" min="0" max="23">
+                <input type="number" id="mins-input" placeholder="دقيقة" min="0" max="59">
+                <input type="number" id="secs-input" placeholder="ثانية" min="0" max="59">
+            </div>
+            <div class="timer-buttons">
+                <button id="start-btn">ابدأ العداد</button>
+                <button id="reset-btn">تصفير</button>
+            </div>
+        </div>
+
+        <div class="input-row">
+            <input type="text" id="task-input" placeholder="ما هو هدفك اليوم؟">
+            <button id="add-task-btn">إضافة</button>
+        </div>
+
+        <div id="tasks-list"></div>
+        <div id="motivation-msg"></div>
+    </div>
+
+    <script>
+        const endTimerMessages = [
+            "يا بطلة الوقت خلص! إنجاز أسطوري يضاف لتاريخك! 🏆🎉",
+            "تمت المهمة بنجاح ساحق! أنتي شاطرة ومفيش زيك! 💪✨",
+            "انتهى الوقت! خدي نفس عميق وافتخري بنفسك يا روكا! 🌟",
+            "الله على العظمة! خلصنا الوقت بالتمام والكمال! 🚀🥳"
+        ];
+
+        let timer;
+        const timeDisplay = document.getElementById('time-display');
+        const hoursInput = document.getElementById('hours-input');
+        const minsInput = document.getElementById('mins-input');
+        const secsInput = document.getElementById('secs-input');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const motivationMsg = document.getElementById('motivation-msg');
+
+        // دالة نغمة الجرس المضمونة بدون روابط خارجية لتجنب المشاكل
+        function playBeepSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 1.0); 
+            } catch(e) { console.log(e); }
+        }
+
+        startBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            
+            let hrs = parseInt(hoursInput.value) || 0;
+            let mns = parseInt(minsInput.value) || 0;
+            let scs = parseInt(secsInput.value) || 0;
+            
+            let totalSeconds = (hrs * 3600) + (mns * 60) + scs;
+            
+            if (totalSeconds <= 0) {
+                alert("من فضلكِ حددي وقتاً أولاً!");
+                return;
+            }
+            
+            timer = setInterval(() => {
+                totalSeconds--;
+                
+                let h = Math.floor(totalSeconds / 3600);
+                let m = Math.floor((totalSeconds % 3600) / 60);
+                let s = totalSeconds % 60;
+                
+                timeDisplay.textContent = 
+                    `${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(timer);
+                    playBeepSound();
+                    confetti({ particleCount: 150, spread: 85, origin: { y: 0.5 } });
+                    
+                    const randomAlertMsg = endTimerMessages[Math.floor(Math.random() * endTimerMessages.length)];
+                    motivationMsg.textContent = randomAlertMsg;
+                    alert(randomAlertMsg);
+                }
+            }, 1000);
+        });
+
+        resetBtn.addEventListener('click', () => { 
+            clearInterval(timer); 
+            timeDisplay.textContent = "00:00:00"; 
+            hoursInput.value = ""; minsInput.value = ""; secsInput.value = "";
+            motivationMsg.textContent = "";
+        });
+
+        const taskInput = document.getElementById('task-input');
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const tasksList = document.getElementById('tasks-list');
+
+        let savedTasks = JSON.parse(localStorage.getItem('myTasks')) || [];
+
+        function renderTasks() {
+            tasksList.innerHTML = "";
+            savedTasks.forEach((task, index) => {
+                const taskBox = document.createElement('div');
+                taskBox.className = 'task-box';
+                taskBox.innerHTML = `
+                    <span class="task-text">${task}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})">تم الإنجاز ✓</button>
+                `;
+                tasksList.appendChild(taskBox);
+            });
+        }
+
+        addTaskBtn.addEventListener('click', () => {
+            const text = taskInput.value.trim();
+            if (text === "") return;
+            savedTasks.push(text);
+            localStorage.setItem('myTasks', JSON.stringify(savedTasks));
+            renderTasks();
+            taskInput.value = "";
+        });
+
+        window.deleteTask = function(index) {
+            savedTasks.splice(index, 1);
+            localStorage.setItem('myTasks', JSON.stringify(savedTasks));
+            renderTasks();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        };
+
+        renderTasks();
+    </script>
+</body>
+</html>
