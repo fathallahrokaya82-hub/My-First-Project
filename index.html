@@ -69,7 +69,7 @@
     </div>
 
     <script>
-        // مصفوفة الرسايل التحفيزية
+        // الجمل التحفيزية العشوائية
         const messages = [
             "عاش يا بطلة! دايماً متميزة! 🌟",
             "خطوة ممتازة نحو النجاح! 🚀",
@@ -85,7 +85,7 @@
         const resetBtn = document.getElementById('reset-btn');
         const motivationMsg = document.getElementById('motivation-msg');
 
-        // تشغيل التايمر
+        // تشغيل التايمر والزراير
         startBtn.addEventListener('click', () => {
             clearInterval(timer);
             let minutes = parseInt(minsInput.value);
@@ -103,14 +103,14 @@
                 
                 if (totalSeconds <= 0) {
                     clearInterval(timer);
-                    confetti(); // تأثير الورق الطاير
+                    confetti(); // الاحتفال بالورق الملون
                     motivationMsg.textContent = "الوقت خلص! إنجاز عظيم! ⏰🎉";
                     alert("عاش! الوقت انتهى بنجاح!");
                 }
             }, 1000);
         });
 
-        // ريست التايمر
+        // زرار الريست
         resetBtn.addEventListener('click', () => { 
             clearInterval(timer); 
             timeDisplay.textContent = "00:00"; 
@@ -118,7 +118,7 @@
             motivationMsg.textContent = "";
         });
 
-        // إدارة المهام والحفظ التلقائي
+        // تشغيل الأهداف مع ميزة الحفظ التلقائي عشان ما تتمسحش لما تقفلي الصفحة
         const taskInput = document.getElementById('task-input');
         const addTaskBtn = document.getElementById('add-task-btn');
         const tasksList = document.getElementById('tasks-list');
@@ -147,19 +147,20 @@
             taskInput.value = "";
         });
 
+        // عند مسح أو إنهاء أي هدف
         window.deleteTask = function(index) {
             savedTasks.splice(index, 1);
             localStorage.setItem('myTasks', JSON.stringify(savedTasks));
             renderTasks();
             
-            // تشغيل الورق الطاير والرسالة التحفيزية عند مسح المهمة
+            // تشغيل الورق الطاير الاحتفالي والرسالة التحفيزية
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             const randomMsg = messages[Math.floor(Math.random() * messages.length)];
             motivationMsg.textContent = randomMsg;
             setTimeout(() => { motivationMsg.textContent = ""; }, 4000);
         };
 
-        // الدارك مود مع الحفظ
+        // تشغيل الدارك مود مع حفظ الاختيار
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         if (localStorage.getItem('darkMode') === 'enabled') {
             document.body.classList.add('dark-mode-active');
@@ -173,7 +174,7 @@
             darkModeToggle.textContent = isDark ? "☀️ الوضع الفاتح" : "🌙 الوضع الداكن";
         });
 
-        // تحميل الداتا أول ما الصفحة تفتح
+        // تشغيل التحميل الأولي
         renderTasks();
     </script>
 </body>
