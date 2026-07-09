@@ -1,60 +1,64 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إنجازاتي 🎆</title>
+    <title>My Achievements 🎆</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .app-card { background-color: #ffffff; width: 95%; max-width: 400px; border-radius: 24px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); text-align: center; border: 1px solid #e2e8f0; }
-        h1 { color: #1e293b; font-size: 24px; margin: 0 0 25px 0; font-weight: 700; }
+        body { background-color: #fdf6f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #4a3b40; }
+        .app-card { background-color: #ffffff; width: 95%; max-width: 400px; border-radius: 24px; padding: 30px; box-shadow: 0 10px 25px rgba(244, 186, 197, 0.2); text-align: center; border: 1px solid #f7e1e5; }
+        h1 { color: #4a3b40; font-size: 26px; margin: 0 0 25px 0; font-weight: 700; }
         
-        /* العداد الكلاسيك المريح للعين */
-        .timer-container { background: #1e293b; border-radius: 20px; padding: 25px; color: white; margin-bottom: 25px; box-shadow: 0 6px 15px rgba(30, 41, 59, 0.2); }
-        #time-display { font-size: 42px; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+        /* Pastel Pink Timer Container */
+        .timer-container { background: linear-gradient(135deg, #ffb3c1, #ffcad4); border-radius: 20px; padding: 25px; color: white; margin-bottom: 25px; box-shadow: 0 6px 15px rgba(255, 179, 193, 0.2); }
+        #time-display { font-size: 45px; font-weight: bold; margin-bottom: 15px; letter-spacing: 2px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .timer-inputs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .timer-inputs input { width: 70px; height: 42px; border: 1px solid #475569; border-radius: 10px; text-align: center; font-size: 16px; outline: none; color: #1e293b; font-weight: bold; background-color: #ffffff; }
+        .timer-inputs input { width: 70px; height: 42px; border: 1px solid rgba(255,255,255,0.6); border-radius: 10px; text-align: center; font-size: 16px; outline: none; color: #4a3b40; font-weight: bold; background-color: #ffffff; }
+        .timer-inputs input::placeholder { color: #b5a6aa; }
         .timer-buttons { display: flex; justify-content: center; gap: 12px; }
-        .timer-buttons button { background: #ffffff; border: none; color: #1e293b; font-size: 15px; font-weight: bold; cursor: pointer; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s; }
-        .timer-buttons button:hover { background: #f1f5f9; transform: translateY(-2px); }
+        .timer-buttons button { background: #ffffff; border: none; color: #ff758f; font-size: 15px; font-weight: bold; cursor: pointer; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .timer-buttons button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+        #reset-btn { background: rgba(255, 255, 255, 0.4); color: #ffffff; box-shadow: none; }
+        #reset-btn:hover { background: rgba(255, 255, 255, 0.6); }
         
-        /* إضافة المهام (تم إصلاح الجزء المقطوع هنا) */
+        /* Tasks Section */
         .input-row { display: flex; gap: 10px; margin-bottom: 25px; }
-        #task-input { flex: 1; height: 46px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0 15px; font-size: 15px; outline: none; text-align: right; color: #1e293b; }
-        #task-input:focus { border-color: #64748b; box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15); }
-        #add-task-btn { background-color: #1e293b; color: white; border: none; border-radius: 12px; padding: 0 22px; font-size: 15px; cursor: pointer; font-weight: bold; }
+        #task-input { flex: 1; height: 46px; border: 1px solid #e8d7da; border-radius: 12px; padding: 0 15px; font-size: 15px; outline: none; text-align: left; color: #4a3b40; background-color: #ffffff; }
+        #task-input:focus { border-color: #ff758f; box-shadow: 0 0 0 3px rgba(255, 117, 143, 0.15); }
+        #add-task-btn { background-color: #ff758f; color: white; border: none; border-radius: 12px; padding: 0 22px; font-size: 15px; cursor: pointer; font-weight: bold; }
         
-        #tasks-list { text-align: right; }
-        .task-box { display: flex; justify-content: space-between; align-items: center; background-color: #f8fafc; padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-right: 5px solid #64748b; }
-        .task-text { font-size: 15px; color: #334155; font-weight: 500; }
-        .delete-btn { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: bold; }
+        #tasks-list { text-align: left; }
+        .task-box { display: flex; justify-content: space-between; align-items: center; background-color: #fffbfc; padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #fceef1; border-left: 5px solid #ff758f; }
+        .task-text { font-size: 15px; color: #4a3b40; font-weight: 500; }
+        .delete-btn { background-color: #ff5c5c; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: bold; }
         
-        #motivation-msg { color: #059669; font-weight: bold; margin-top: 20px; min-height: 24px; font-size: 16px; }
+        /* Motivation Message Area */
+        #motivation-msg { color: #ff477e; font-weight: bold; margin-top: 20px; min-height: 24px; font-size: 16px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
     <div class="app-card">
-        <h1>إنجازاتي 🎆</h1>
+        <h1>My Achievements 🎆</h1>
 
         <div class="timer-container">
             <div id="time-display">00:00:00</div>
             <div class="timer-inputs">
-                <input type="number" id="hours-input" placeholder="ساعة" min="0" max="23">
-                <input type="number" id="mins-input" placeholder="دقيقة" min="0" max="59">
-                <input type="number" id="secs-input" placeholder="ثانية" min="0" max="59">
+                <input type="number" id="hours-input" placeholder="Hrs" min="0" max="23">
+                <input type="number" id="mins-input" placeholder="Min" min="0" max="59">
+                <input type="number" id="secs-input" placeholder="Sec" min="0" max="59">
             </div>
             <div class="timer-buttons">
-                <button id="start-btn">ابدأ العداد</button>
-                <button id="reset-btn">تصفير</button>
+                <button id="start-btn">Start</button>
+                <button id="reset-btn">Reset</button>
             </div>
         </div>
 
         <div class="input-row">
-            <input type="text" id="task-input" placeholder="ما هو هدفك اليوم؟">
-            <button id="add-task-btn">إضافة</button>
+            <input type="text" id="task-input" placeholder="What is your goal today?">
+            <button id="add-task-btn">Add</button>
         </div>
 
         <div id="tasks-list"></div>
@@ -62,11 +66,19 @@
     </div>
 
     <script>
+        // English Motivational Messages when completing a task
+        const completionMessages = [
+            "Awesome job! Mission accomplished! 💪🔥",
+            "Task completed! You are one step closer to success! 🚀✨",
+            "Boom! Goal achieved! Proud of you, Roka! 🌟",
+            "You are doing amazing! Keep crushing your goals! 🏆"
+        ];
+
         const endTimerMessages = [
-            "يا بطلة الوقت خلص! إنجاز أسطوري يضاف لتاريخك! 🏆🎉",
-            "تمت المهمة بنجاح ساحق! أنتي شاطرة ومفيش زيك! 💪✨",
-            "انتهى الوقت! خدي نفس عميق وافتخري بنفسك يا روكا! 🌟",
-            "الله على العظمة! خلصنا الوقت بالتمام والكمال! 🚀🥳"
+            "Time's up! Spectacular achievement! 🏆🎉",
+            "Task completed successfully! You are unstoppable! 💪✨",
+            "Time over! Take a deep breath and be proud of yourself! 🌟",
+            "Brilliant! You managed your time perfectly! 🚀🥳"
         ];
 
         let timer;
@@ -78,42 +90,48 @@
         const resetBtn = document.getElementById('reset-btn');
         const motivationMsg = document.getElementById('motivation-msg');
 
-        // دالة نغمة الجرس المضمونة بدون روابط خارجية لتجنب المشاكل
-        function playBeepSound() {
+        // Built-in Safe Alarm Sound (Beep)
+        function playAlarmSound() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
+                let osc1 = audioCtx.createOscillator();
+                let gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, audioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.3);
                 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 1.0); 
+                setTimeout(() => {
+                    let osc2 = audioCtx.createOscillator();
+                    let gain2 = audioCtx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
+                    gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.3);
+                }, 400);
             } catch(e) { console.log(e); }
         }
 
         startBtn.addEventListener('click', () => {
             clearInterval(timer);
-            
             let hrs = parseInt(hoursInput.value) || 0;
             let mns = parseInt(minsInput.value) || 0;
             let scs = parseInt(secsInput.value) || 0;
-            
             let totalSeconds = (hrs * 3600) + (mns * 60) + scs;
             
             if (totalSeconds <= 0) {
-                alert("من فضلكِ حددي وقتاً أولاً!");
+                alert("Please set a valid time first!");
                 return;
             }
             
             timer = setInterval(() => {
                 totalSeconds--;
-                
                 let h = Math.floor(totalSeconds / 3600);
                 let m = Math.floor((totalSeconds % 3600) / 60);
                 let s = totalSeconds % 60;
@@ -123,12 +141,12 @@
                 
                 if (totalSeconds <= 0) {
                     clearInterval(timer);
-                    playBeepSound();
+                    playAlarmSound();
                     confetti({ particleCount: 150, spread: 85, origin: { y: 0.5 } });
                     
-                    const randomAlertMsg = endTimerMessages[Math.floor(Math.random() * endTimerMessages.length)];
-                    motivationMsg.textContent = randomAlertMsg;
-                    alert(randomAlertMsg);
+                    const randomEndMsg = endTimerMessages[Math.floor(Math.random() * endTimerMessages.length)];
+                    motivationMsg.textContent = randomEndMsg;
+                    alert(randomEndMsg);
                 }
             }, 1000);
         });
@@ -140,6 +158,7 @@
             motivationMsg.textContent = "";
         });
 
+        // Tasks Management
         const taskInput = document.getElementById('task-input');
         const addTaskBtn = document.getElementById('add-task-btn');
         const tasksList = document.getElementById('tasks-list');
@@ -153,7 +172,7 @@
                 taskBox.className = 'task-box';
                 taskBox.innerHTML = `
                     <span class="task-text">${task}</span>
-                    <button class="delete-btn" onclick="deleteTask(${index})">تم الإنجاز ✓</button>
+                    <button class="delete-btn" onclick="deleteTask(${index})">Done ✓</button>
                 `;
                 tasksList.appendChild(taskBox);
             });
@@ -166,13 +185,21 @@
             localStorage.setItem('myTasks', JSON.stringify(savedTasks));
             renderTasks();
             taskInput.value = "";
+            motivationMsg.textContent = "";
         });
 
+        // TRIGGER MOTIVATION EXACTLY ON CLICKING "DONE"
         window.deleteTask = function(index) {
             savedTasks.splice(index, 1);
             localStorage.setItem('myTasks', JSON.stringify(savedTasks));
             renderTasks();
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            
+            // 1. Confetti bursts!
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+            
+            // 2. Show random English motivational message instantly
+            const randomMsg = completionMessages[Math.floor(Math.random() * completionMessages.length)];
+            motivationMsg.textContent = randomMsg;
         };
 
         renderTasks();
